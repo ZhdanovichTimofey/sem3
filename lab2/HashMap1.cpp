@@ -1,17 +1,29 @@
 #include <iostream>
 #include <stdexcept>
+#include <vector>
+#include <utility>
 
-class StaticMap                                                                     
+class Map 
+{
+public:
+	virtual void put(int key, int value);  /* methods */
+    virtual void add(int key, int increment); 
+    virtual int get(int key);
+    virtual void getAll();
+};
+
+class StaticMap : public Map                                                                     
 {                                                                               
 public:                                                                         
     StaticMap();   /* constructor */                                            
-    ~StaticMap();  /* destructor */                                             
-                                                                                
-    void put(int key, int value);  /* methods */
-    void add(int key, int increment); 
+    ~StaticMap();  /* destructor */  
+//	void add(int key, int increment) override;
+
+	void put(int key, int value);  /* methods */
+	void add(int key, int increment); 
     int get(int key);
-    void getAll();
-    
+    void getAll();                                            
+	                                                                               
 	
 	/* throws std::runtime_error("key not found")
        if key was not found */
@@ -30,12 +42,12 @@ private:
 		this->keys = newkeys;
 		this->values = newvalues;
 		this->capacity *= 2;
-	}
+	}     
 	
 	int* keys;
 	int* values;
 	int capacity;
-	int size;                                                               
+	int size;                                                          
     /* your fields here */
 };
 
@@ -65,7 +77,8 @@ void StaticMap::add(int key, int increment)
 	values[i] += increment;
 }
 
-int StaticMap::get(int key){
+int StaticMap::get(int key)
+{
 	int i = 0;
 	int* l = this->keys;
 	int* r = l + this->size; 
@@ -90,7 +103,8 @@ int StaticMap::get(int key){
 	}
 }
 
-void StaticMap::put(int key, int value){
+void StaticMap::put(int key, int value)
+{
 	if (this->size == this->capacity)
 		{	
 			this->extend();
@@ -121,6 +135,58 @@ void StaticMap::getAll()
 	}
 }
 
+class HashMap : public Map 
+{
+public:
+	HashMap();   /* constructor */                                            
+    ~HashMap();  /* destructor */  
+	
+	void put(int key, int value);  /* methods */
+	void add(int key, int increment); 
+    int get(int key);
+    void getAll(); 
+	
+private:
+	void extend()
+	{
+		int* newkeys = new int[this->capacity * 2];
+		int* newvalues = new int[this->capacity * 2];
+		for (int i = 0; i < this->capacity; i++)
+		{
+			newkeys[i] = this->keys[i];
+			newvalues[i] = this->values[i];
+		}
+		delete[] this->keys;
+		delete[] this->values;
+		this->keys = newkeys;
+		this->values = newvalues;
+		this->capacity *= 2;
+	}     
+	
+	int* keys;
+	int* values;
+	int capacity;
+	int size;
+	int number;
+	std::vector<int>* hash_keys;
+	std::vector<int>* hash_values; 
+};
+
+HashMap::HashMap(){
+	this->number = 4;
+	this->capacity = 32;
+	this->size = 0;
+	this->keys = new int[32];
+	this->values = new int[32];
+	this->hash_keys = new std::vector<int>[4];
+	this->hash_values = new std::vector<int>[4];
+}
+
+HashMap::~HashMap(){
+	delete[] this->keys;
+	delete[] this->values;
+}
+
 int main()
 {
 	StaticMap sm;
@@ -132,4 +198,3 @@ int main()
 	std::cout << sm.get(4);
 	return 0;
 }
-
