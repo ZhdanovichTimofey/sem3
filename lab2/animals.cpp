@@ -2,7 +2,7 @@
 
 class Animal {
 public:
-        void make_a_sound();
+        virtual void make_a_sound();
 };
 
 void Animal::make_a_sound() {
@@ -38,7 +38,7 @@ int main()
         Animal& rRex = rex;
         anima.make_a_sound();
         rex.make_a_sound();
-        pRex->make_a_sound();
+        pRex->make_a_sound(); 
         rRex.make_a_sound();
         cat.make_a_sound();
         return 0;
